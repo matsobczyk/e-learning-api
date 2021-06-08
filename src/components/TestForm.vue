@@ -10,6 +10,7 @@
     <div class="container" v-if="!test">
         <p>No data</p>
     </div>
+
     
 
 <div v-for="(questions, int) in test.questions" :key="int">
@@ -17,12 +18,12 @@
         <div class="container" v-if="test" :test="test">
         <img class="bgimg" src="../assets/logo.svg" height="150px">
         <div class="singleQuestion" v-for="question in questions" :key="question">
-            <label>
+            <label class="label">
             {{question.question}} <br/>
             </label>
             <div class="inline">
                 <div class="answers" v-for="answer in question.availableAnswers" :key="answer"> 
-                        <input type="radio" :name="question._id">
+                        <input class="radioInput" type="radio" :name="question._id">
                         <div class="answerText">{{answer}}</div>
                 </div>
             </div>
@@ -37,13 +38,13 @@
 
 
     <div class="bottomNavBar" :key="navButtonsKey">
-        <button class="button" v-on:click="this.getTest()">
+        <button class="button" v-on:click="this.previous">
             Previous
         </button>
         <div id="navigationButtons" v-for="(button, id) in this.resultCount" :key="button">
-             <input type="radio" v-model="pageNumber" name="some-radios" :value=id>
+             <input class="radioInput" type="radio" v-model="pageNumber" name="some-radios" :value=id>
         </div>
-        <button class="button nextButton">
+        <button class="button nextButton" v-on:click="this.next">
             Next
         </button>
     </div>
@@ -66,12 +67,18 @@ export default {
     },
     methods: {
         next: function() {
-            this.pageNumber+=1;
-            alert(this.pageNumber);
+            if (this.pageNumber < this.resultCount-1)
+            {
+                this.pageNumber+=1;
+
+            }
+ 
         },
         previous: function() {
-            this.pageNumber -=1;
-            alert(this.pageNumber);
+            if (this.pageNumber > 0){
+                this.pageNumber -=1;
+            }
+            
         },
         alert: function () {
             alert(this.test)
@@ -147,6 +154,9 @@ export default {
     width: 6em;
     background-color: #f2cc8f;
 }
+.button:active{
+    background-color: #bd9d6a;
+}
 .bottomNavBar {
     background-color: #575757;
     position: fixed;
@@ -185,7 +195,7 @@ export default {
     position: relative;
     margin-bottom: 90px;
 }
-label {
+.label{
     color: #f4f1de;
     margin: 25px 0 15px;
     font-size: 1.2em;
@@ -202,7 +212,7 @@ label {
     color: #f4f1de;
     font-size: 1.1em;
 }
-input[type='radio']:after {
+.radioInput:after {
     width: 15px;
     height: 15px;
     border-radius: 15px;
@@ -215,7 +225,7 @@ input[type='radio']:after {
     visibility: visible;
     border: 2px solid white;
 }
-input[type='radio']:checked:after {
+.radioInput:checked:after {
     width: 15px;
     height: 15px;
     border-radius: 15px;

@@ -1,7 +1,7 @@
 <template>
   <div>
-      <form>
-          <label>Enter Your code:</label>
+      <form class="loginForm">
+          <label class="loginLabel">Enter Your code:</label>
           <input type="code" required v-model="code">
           <p>Code : {{ code }} </p>
       </form>
@@ -20,7 +20,7 @@ export default {
 </script>
 
 <style>
-form {
+.loginForm {
     max-width: 420px;
     margin: 30px auto;
     background: white;
@@ -28,7 +28,7 @@ form {
     padding: 40px;
     border-radius: 10px;
 }
-label {
+.loginLabel {
     color: #aaa;
     display: inline-block;
     margin: 25px 0 15px;
@@ -37,14 +37,6 @@ label {
     letter-spacing: 1px;
     font-weight: bold;
 }
-input{
-    display: block;
-    padding: 10px 6px;
-    width: 100%;
-    box-sizing:border-box;
-    border:none;
-    border-bottom: 1px solid #ddd;
-    color: #555;
-}
+
 
 </style>
