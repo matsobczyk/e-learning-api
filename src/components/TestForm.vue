@@ -7,24 +7,42 @@
             </template>
         </countdown>
     </div>
-    <div class="container" v-if="test" :test="test">
-        <div class="singleQuestion" v-for="question in test.questions" :key="question._id">
+    <div class="container" v-if="!test">
+        <p>No data</p>
+    </div>
+    
+
+<div v-for="(questions, int) in test.questions" :key="int">
+    <div v-show="pageNumber===int">
+        <div class="container" v-if="test" :test="test">
+        <img class="bgimg" src="../assets/logo.svg" height="150px">
+        <div class="singleQuestion" v-for="question in questions" :key="question">
             <label>
-                {{question.question}} <br/>
+            {{question.question}} <br/>
             </label>
             <div class="inline">
                 <div class="answers" v-for="answer in question.availableAnswers" :key="answer"> 
-                    <input type="radio" :name="question._id" id="">
-                    <div class="answerText">{{answer}}</div>
+                        <input type="radio" :name="question._id">
+                        <div class="answerText">{{answer}}</div>
                 </div>
             </div>
         </div>
-        <img class="bgimg" src="../assets/logo.svg" height="100px">
     </div>
-    <div class="bottomNavBar">
-        <button class="button previousButton">
+    </div>
+    
+</div>
+            
+            
+    
+
+
+    <div class="bottomNavBar" :key="navButtonsKey">
+        <button class="button" v-on:click="this.getTest()">
             Previous
         </button>
+        <div id="navigationButtons" v-for="(button, id) in this.resultCount" :key="button">
+             <input type="radio" v-model="pageNumber" name="some-radios" :value=id>
+        </div>
         <button class="button nextButton">
             Next
         </button>
@@ -38,12 +56,23 @@ export default {
     data (){
         return {
             test: null,
+            pages: 0,
+            navButtonsKey: 0,
+            pageNumber: 0
             }
     },
     created () {
         this.getTest()
     },
     methods: {
+        next: function() {
+            this.pageNumber+=1;
+            alert(this.pageNumber);
+        },
+        previous: function() {
+            this.pageNumber -=1;
+            alert(this.pageNumber);
+        },
         alert: function () {
             alert(this.test)
         },
@@ -52,9 +81,10 @@ export default {
             method: 'GET',
             headers: { 'auth-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDk3ZDQyMGU0M2VhODE1OTkxNzU3ODkiLCJpYXQiOjE2MjExNjEwNzV9.swJaj138SBU5SJ92mhX03OTbDB-fxA9LC0-6XfbOWes' },
             };
-            fetch('http://localhost:3000/test/60a8fa71413f9b167ccc1444', requestOptions)
+            fetch('http://localhost:3000/test/60bf5362cfcff614e8d60928', requestOptions)
             .then(response => response.json())
             .then(data => (this.test = data))
+            this.i = Math.ceil(this.test.questions.length / 3)
         },
         transform(props) {
             Object.entries(props).forEach(([key, value]) => {
@@ -64,12 +94,37 @@ export default {
                 }); 
                 return props;
         },
+        forceRerender() {
+            this.navButtonsKey += 1;
+        }
     },
+    computed: {
+        resultCount () {
+            var number = Object.keys(this.test.questions).length;
+            return number;
+        },
+        testCount () {
+            var number = Math.ceil(this.test.questions.length / 3)
+            return number;
+        },
+        choppedTest () {
+            var result = [];
+            for (var i in this.test.questions) {
+                result.push([i, this.test.questions[i]])
+            }
+            return result; 
+        }
+}
     
 }
 </script>
 
 <style>
+#navigationButtons{
+    padding-top: 12px;
+    padding-left: 1vw;
+    padding-right: 1vw;
+}
 .timer {
     padding: 10px;
     color: #fcfcfc;
@@ -78,8 +133,8 @@ export default {
     font-weight: bold;
 }
 .button{
-    margin-left: 100px;
-    margin-right: 100px;
+    margin-left: 12vw;
+    margin-right: 12vw;
     margin-top: 0.5em;
     border: none;
     color: white;
@@ -88,15 +143,12 @@ export default {
     height: 2em;
     text-align: center;
     line-height: 2em;
-    display: table-cell;
-    vertical-align: middle;
     border-radius: 12px;
     width: 6em;
     background-color: #f2cc8f;
 }
 .bottomNavBar {
     background-color: #575757;
-    overflow: hidden;
     position: fixed;
     bottom: 0;
     width: 100%;
@@ -110,17 +162,7 @@ export default {
     position: absolute;
 }
 .singleQuestion {
-    z-index: 2;
     padding-top: 30px;
-}
-
-ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-}
-li{
-    display: inline;
 }
 .bar{
     width: 100%;
@@ -131,19 +173,22 @@ li{
     text-align: center;
 }
 .container {
+    width: 65vw;
+    max-width: 600px;
     display: inline-block;
-    margin: 50px;
+    margin: 40px;
     background: #a0b6ac;
     text-align: left;
     padding: 40px;
     padding-top: 0px;
     border-radius: 10px;
     position: relative;
+    margin-bottom: 90px;
 }
 label {
     color: #f4f1de;
     margin: 25px 0 15px;
-    font-size: 1.5em;
+    font-size: 1.2em;
     letter-spacing: 1px;
     font-weight: bold;
 }
@@ -155,7 +200,7 @@ label {
 .answerText {
     margin-left: 10px;
     color: #f4f1de;
-    font-size: 1.3em;
+    font-size: 1.1em;
 }
 input[type='radio']:after {
     width: 15px;
@@ -177,7 +222,7 @@ input[type='radio']:checked:after {
     top: -2px;
     left: -1px;
     position: relative;
-    background-color: #f2cc8f;
+    background-color: #575b76;
     content: '';
     display: inline-block;
     visibility: visible;

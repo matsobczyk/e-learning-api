@@ -5,16 +5,11 @@
           <input type="code" required v-model="code">
           <p>Code : {{ code }} </p>
       </form>
-      <TestForm />
   </div>
 </template>
 
 <script>
-import TestForm from '../components/TestForm.vue'
 export default {
-    components: { 
-    TestForm,
-},
     data() {
         return {
             code: ''
