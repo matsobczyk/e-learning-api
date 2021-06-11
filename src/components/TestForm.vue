@@ -1,11 +1,13 @@
 <template>
 <div class="center">
     <div class="bar">
+        <div class="barInfo">{{this.info.name}}</div>
         <countdown :time="120000" :transform="transform">
             <template slot-scope="props" auto-start:true>
                 <div class="timer">{{ props.minutes }}:{{ props.seconds }}</div>
             </template>
         </countdown>
+        <div class="barInfo">{{this.info.index}}</div>
     </div>
     <div class="container" v-if="!test">
         <p>No data</p>
@@ -17,13 +19,13 @@
     <div v-show="pageNumber===int">
         <div class="container" v-if="test" :test="test">
         <img class="bgimg" src="../assets/logo.svg" height="150px">
-        <div class="singleQuestion" v-for="question in questions" :key="question">
+        <div class="singleQuestion" v-for="(question, questionNumber) in questions" :key="question">
             <label class="label">
             {{question.question}} <br/>
             </label>
             <div class="inline">
-                <div class="answers" v-for="answer in question.availableAnswers" :key="answer"> 
-                        <input class="radioInput" type="radio" :name="question._id">
+                <div class="answers" v-for="(answer, answerId) in question.availableAnswers" :key="answer"> 
+                        <input class="radioInput" type="radio" :name="question._id" value="answer" v-on:change="addAnswer(int, questionNumber, answerId, answer)" >
                         <div class="answerText">{{answer}}</div>
                 </div>
             </div>
@@ -47,25 +49,41 @@
         <button class="button nextButton" v-on:click="this.next">
             Next
         </button>
+        <button class="button" v-on:click="this.submit">
+            submit
+        </button>
     </div>
 </div>
 
 </template>
-
+// compute answers to be able to change
 <script>
-export default {
-    data (){
+import Vue from 'vue'
+export default Vue.extend({
+    props:['info'],
+    data() {
         return {
             test: null,
             pages: 0,
             navButtonsKey: 0,
-            pageNumber: 0
-            }
+            pageNumber: 0,
+            userAnswers: [{}]
+            };
     },
     created () {
         this.getTest()
     },
     methods: {
+        setCode: function() {
+            
+        },
+        addAnswer: function(int, questionNumber, answerId, answer){
+            this.userAnswers.push({'int':int, 'questionNumber':questionNumber, 'answerId':answerId, 'answer': answer})
+            console.log(this.userAnswers)
+        },
+        submit: function() {
+            this.$router.push({name: 'Score', params: {userAnswers: this.userAnswers}})
+        },
         next: function() {
             if (this.pageNumber < this.resultCount-1)
             {
@@ -81,14 +99,14 @@ export default {
             
         },
         alert: function () {
-            alert(this.test)
+            alert()
         },
         getTest: function() {
             const requestOptions = {
             method: 'GET',
             headers: { 'auth-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDk3ZDQyMGU0M2VhODE1OTkxNzU3ODkiLCJpYXQiOjE2MjExNjEwNzV9.swJaj138SBU5SJ92mhX03OTbDB-fxA9LC0-6XfbOWes' },
             };
-            fetch('http://localhost:3000/test/60bf5362cfcff614e8d60928', requestOptions)
+            fetch('http://localhost:3000/test/' + this.info.code, requestOptions)
             .then(response => response.json())
             .then(data => (this.test = data))
             this.i = Math.ceil(this.test.questions.length / 3)
@@ -123,7 +141,7 @@ export default {
         }
 }
     
-}
+})
 </script>
 
 <style>
@@ -178,6 +196,10 @@ export default {
     width: 100%;
     height: 3em;
     background: #f2cc8f;
+    display: flex;
+      align-items: center;
+  justify-content: center;
+
 }
 .center{
     text-align: center;
@@ -187,7 +209,7 @@ export default {
     max-width: 600px;
     display: inline-block;
     margin: 40px;
-    background: #a0b6ac;
+    background: #9fbbaf;
     text-align: left;
     padding: 40px;
     padding-top: 0px;
@@ -237,6 +259,20 @@ export default {
     display: inline-block;
     visibility: visible;
     border: 2px solid white;
+}
+.barInfo {
+    font-size: 1.2em;
+    letter-spacing: 1px;
+    font-weight: bold;
+    color: #ffffff;
+    margin-right: 9vw;
+    margin-left: 9vw;
+   color: transparent;
+   text-shadow: 0 0 7px rgb(255, 253, 253);
+}
+.barInfo:hover {
+    color: #FFFFFF;
+   text-shadow: 0 0 5px rgba(0,0,0,0);
 }
 
 </style>
