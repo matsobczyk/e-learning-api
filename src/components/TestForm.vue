@@ -49,10 +49,12 @@
         <button class="button nextButton" v-on:click="this.next">
             Next
         </button>
-        <button class="button" v-on:click="this.submit">
-            submit
-        </button>
+        
     </div>
+   
+    <button v-if="this.pageNumber==this.resultCount-1" class="button" v-on:click="this.submit">
+            Submit
+        </button>
 </div>
 
 </template>

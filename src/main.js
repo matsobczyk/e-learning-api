@@ -13,6 +13,10 @@ import VueCountdown from '@chenfengyuan/vue-countdown';
 Vue.component(VueCountdown.name, VueCountdown);
 
 const routes = [
+  {
+    path: '/',
+    redirect: '/login'
+  },
   {path: '/login', component: LoginForm},
   {name: 'Test', path: '/test', component: TestForm, props: true},
   {name: 'Score', path: '/score', component: ScorePage, props: true},

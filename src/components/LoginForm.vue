@@ -1,7 +1,7 @@
 <template>
   <div class="center">
     <div class="bar">
-       Test Platform
+       <h2>Test Platform</h2>
     </div>
       <form class="box">
           <h1>Login</h1>
@@ -40,6 +40,11 @@ export default {
 </script>
 
 <style>
+h2{
+    font-family: sans-serif;
+    font-weight: 500;
+    margin: 40px;
+}
 .box{
     font-family: sans-serif;
     width: 350px;
